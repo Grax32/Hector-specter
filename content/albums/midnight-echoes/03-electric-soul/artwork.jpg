@@ -1,0 +1,13 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="grad4">
+      <stop offset="0%" style="stop-color:#e94560;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <rect width="500" height="500" fill="#0a0a1a"/>
+  <circle cx="250" cy="250" r="180" fill="url(#grad4)" opacity="0.7"/>
+  <path d="M 250 100 L 280 200 L 380 220 L 300 290 L 320 390 L 250 340 L 180 390 L 200 290 L 120 220 L 220 200 Z" fill="#ffdd00" opacity="0.8"/>
+  <text x="250" y="460" font-family="Arial, sans-serif" font-size="38" fill="white" text-anchor="middle" font-weight="bold">Electric Soul</text>
+  <text x="250" y="490" font-family="Arial, sans-serif" font-size="20" fill="#ccc" text-anchor="middle">Track 03</text>
+</svg>
