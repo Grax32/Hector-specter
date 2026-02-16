@@ -1,0 +1,9 @@
+{
+  "featured": {
+    "type": "album",
+    "path": "content/albums/midnight-echoes"
+  },
+  "albums": [
+    "content/albums/midnight-echoes"
+  ]
+}

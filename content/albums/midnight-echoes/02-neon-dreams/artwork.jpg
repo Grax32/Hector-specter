@@ -1,0 +1,19 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff00ff;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#00ffff;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#ff00ff;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+  <rect width="500" height="500" fill="#1a1a2e"/>
+  <rect x="50" y="100" width="400" height="300" fill="url(#grad3)"/>
+  <rect x="80" y="130" width="30" height="180" fill="#ff00ff" opacity="0.6"/>
+  <rect x="140" y="150" width="30" height="200" fill="#00ffff" opacity="0.6"/>
+  <rect x="200" y="120" width="30" height="220" fill="#ff00ff" opacity="0.6"/>
+  <rect x="260" y="140" width="30" height="190" fill="#00ffff" opacity="0.6"/>
+  <rect x="320" y="160" width="30" height="170" fill="#ff00ff" opacity="0.6"/>
+  <rect x="380" y="180" width="30" height="150" fill="#00ffff" opacity="0.6"/>
+  <text x="250" y="440" font-family="Arial, sans-serif" font-size="42" fill="white" text-anchor="middle" font-weight="bold">Neon Dreams</text>
+  <text x="250" y="475" font-family="Arial, sans-serif" font-size="20" fill="#ccc" text-anchor="middle">Track 02</text>
+</svg>
