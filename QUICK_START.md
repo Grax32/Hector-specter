@@ -29,6 +29,9 @@ Edit `config.json`:
   },
   "albums": [
     "content/albums/midnight-echoes"
+  ],
+  "singles": [
+    "content/singles/night-drive"
   ]
 }
 ```
@@ -83,7 +86,7 @@ Edit `config.json`:
 - **Colors**: Edit `styles.css` (look for color values like `#e94560`)
 - **Layout**: Edit `styles.css` grid properties
 - **Functionality**: Edit `app.js` to modify behavior
-- **Content order**: Songs are displayed in the order they appear in the album
+- **Content order**: Latest Songs are automatically sorted by `releaseDate` (newest first)
 
 ## Tips
 
@@ -91,3 +94,12 @@ Edit `config.json`:
 - Keep descriptions concise and engaging
 - Ensure all artwork is the same aspect ratio for best results
 - Test locally before deploying
+
+
+## Adding a Standalone Single (Optional)
+
+1. Create folder: `content/singles/your-single-name/`
+2. Add `song.json` (same fields as album songs)
+3. Add artwork, lyrics, and audio files
+4. Add the folder path to `config.json` under `singles`
+

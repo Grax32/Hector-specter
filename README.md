@@ -51,9 +51,28 @@ The main configuration file controls which content is featured and which albums 
   },
   "albums": [
     "content/albums/midnight-echoes"
+  ],
+  "singles": [
+    "content/singles/night-drive"
   ]
 }
 ```
+
+
+### Standalone Singles (Optional)
+
+You can also publish songs that are not part of an album by adding a `singles` array in `config.json`:
+
+```json
+{
+  "singles": [
+    "content/singles/night-drive",
+    "content/singles/city-lights"
+  ]
+}
+```
+
+Each entry must point to a folder that contains a `song.json` file plus the related artwork/audio/lyrics files (same structure as an album song folder).
 
 ### Album Configuration (album.json)
 
@@ -166,6 +185,7 @@ Edit `styles.css` to customize:
 Edit `app.js` to modify:
 - How content is loaded and displayed
 - Number of songs shown in the "Latest Songs" section
+- How standalone singles are loaded from `config.json`
 - Additional features like audio playback
 
 ## Browser Compatibility
