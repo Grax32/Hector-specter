@@ -44,7 +44,7 @@ The main configuration file controls which content is featured and which albums 
 ```json
 {
   "featured": {
-    "type": "song",
+    "type": "song|song",
     "path": "content/singles/this-house-is-haunted"
   },
   "albums": [],
