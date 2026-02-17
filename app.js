@@ -37,7 +37,7 @@ async function loadAlbums() {
         return;
     }
 
-    for (const albumPath of config.albums) {
+    for (const albumPath of config.albums.filter(album => album && album.visible)) {
         try {
             const response = await fetch(`${albumPath}/album.json`);
             const albumData = await response.json();
