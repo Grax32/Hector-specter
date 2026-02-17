@@ -87,12 +87,15 @@ async function loadAlbums() {
         return;
     }
 
-    for (const albumPath of config.albums.filter(album => album && album.visible)) {
+    for (const albumPath of config.albums) {
         try {
             const response = await fetch(`${albumPath}/album.json`);
             const albumData = await response.json();
             albumData.path = albumPath;
-            albums.push(albumData);
+            // Only add albums that are marked as visible (or don't have the visible property, defaulting to true)
+            if (albumData.visible !== false) {
+                albums.push(albumData);
+            }
         } catch (error) {
             console.error(`Error loading album from ${albumPath}:`, error);
         }
