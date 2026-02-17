@@ -24,11 +24,61 @@ async function init() {
 
         // Display songs
         displaySongs();
+        // Setup artist video (plays once muted and freezes on last frame)
+        setupArtistVideo();
     } catch (error) {
         console.error('Error initializing app:', error);
         document.getElementById('featured-content').innerHTML =
             '<p>Error loading content. Please check the configuration.</p>';
     }
+}
+
+// Play the artist video once (muted) and freeze on last frame.
+function setupArtistVideo() {
+    const vid = document.getElementById('artist-video');
+    if (!vid) return;
+
+    // Ensure muted for autoplay policies
+    vid.muted = true;
+    vid.playsInline = true;
+    vid.autoplay = true;
+    vid.loop = false;
+
+    // Attempt to play. Some browsers block autoplay unless muted.
+    const tryPlay = () => {
+        const p = vid.play();
+        if (p && p.catch) {
+            p.catch(err => {
+                // ignore playback error; will remain paused until user interacts
+                console.warn('Artist video autoplay prevented:', err);
+            });
+        }
+    };
+
+    // When video ends, seek to near-end and pause to show final frame.
+    vid.addEventListener('ended', () => {
+        try {
+            const eps = 0.05;
+            const target = Math.max(0, (vid.duration || 0) - eps);
+            vid.currentTime = target;
+            vid.pause();
+        } catch (e) {
+            // fallback: just pause
+            vid.pause();
+        }
+    });
+
+    // If metadata loaded and not ended, play
+    if (vid.readyState >= 2) {
+        tryPlay();
+    } else {
+        vid.addEventListener('loadedmetadata', tryPlay, { once: true });
+    }
+
+    // Also try play on user interaction if autoplay blocked
+    ['pointerdown', 'keydown', 'touchstart'].forEach(evt => {
+        document.addEventListener(evt, tryPlay, { once: true });
+    });
 }
 
 // Load all albums from their directories
@@ -37,7 +87,7 @@ async function loadAlbums() {
         return;
     }
 
-    for (const albumPath of config.albums) {
+    for (const albumPath of config.albums.filter(album => album && album.visible)) {
         try {
             const response = await fetch(`${albumPath}/album.json`);
             const albumData = await response.json();
@@ -139,6 +189,17 @@ function displayFeatured() {
 
     const artworkPath = `${item.path}/${item.artwork}`;
 
+    let mediaHtml = '';
+    if (item.videoFile) {
+        mediaHtml += `\n                <video controls class="featured-video">\n                    <source src="${item.path}/${item.videoFile}" type="video/mp4">\n                    Your browser does not support the video tag.\n                </video>`;
+    } else if (item.videoUrl) {
+        mediaHtml += `\n                <p><a href="${item.videoUrl}" target="_blank" rel="noopener">Watch video</a></p>`;
+    }
+
+    if (item.spotifyUrl) {
+        mediaHtml += `\n                <p><a href="${item.spotifyUrl}" target="_blank" rel="noopener">Listen on Spotify</a></p>`;
+    }
+
     featuredContainer.innerHTML = `
         <div class="featured-item">
             <img src="${artworkPath}" alt="${item.title}">
@@ -151,6 +212,7 @@ function displayFeatured() {
                     `<p class="track-count">${item.songs.length} tracks</p>` : ''}
                 ${featured.type === 'song' && item.duration ?
                     `<p><strong>Duration:</strong> ${item.duration}</p>` : ''}
+                ${mediaHtml}
             </div>
         </div>
     `;
@@ -192,15 +254,29 @@ function displaySongs() {
         .sort((a, b) => parseReleaseDate(b) - parseReleaseDate(a))
         .slice(0, 6);
 
-    songsList.innerHTML = latestSongs.map(song => `
+    songsList.innerHTML = latestSongs.map(song => {
+        let media = '';
+        if (song.videoFile) {
+            media += `\n                <video controls class="song-video">\n                    <source src="${song.path}/${song.videoFile}" type="video/mp4">\n                    Your browser does not support the video tag.\n                </video>`;
+        } else if (song.videoUrl) {
+            media += `\n                <p><a href="${song.videoUrl}" target="_blank" rel="noopener">Watch video</a></p>`;
+        }
+
+        if (song.spotifyUrl) {
+            media += `\n                <p><a href="${song.spotifyUrl}" target="_blank" rel="noopener">Listen on Spotify</a></p>`;
+        }
+
+        return `
         <div class="song-card">
             ${song.artwork ? `<img src="${song.path}/${song.artwork}" alt="${song.title}">` : ''}
             <h3>${song.title}</h3>
             ${song.albumName ? `<p class="album-name">${song.releaseType === 'single' ? 'Release' : 'From'}: ${song.albumName}</p>` : ''}
             ${song.releaseDate ? `<p class="duration">Released: ${song.releaseDate}</p>` : ''}
             ${song.duration ? `<p class="duration">Duration: ${song.duration}</p>` : ''}
+            ${media}
         </div>
-    `).join('');
+    `;
+    }).join('');
 }
 
 // Initialize the app when DOM is ready
