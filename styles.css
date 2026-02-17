@@ -5,11 +5,24 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg-base: #0f0f11;
+    --bg-surface: rgba(244, 244, 242, 0.05);
+    --bg-overlay: rgba(0, 0, 0, 0.35);
+    --text-primary: #f4f4f2;
+    --text-secondary: #cfcec9;
+    --text-muted: #989791;
+    --accent-primary: #00c48c;
+    --accent-primary-hover: #00e6a3;
+    --accent-secondary: #c46a2d;
+    --accent-secondary-hover: #e07c36;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #e0e0e0;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: var(--text-primary);
+    background: var(--bg-base);
     min-height: 100vh;
 }
 
@@ -21,15 +34,15 @@ body {
 
 /* Header */
 header {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--bg-overlay);
     padding: 40px 0;
     text-align: center;
-    border-bottom: 3px solid #e94560;
+    border-bottom: 3px solid var(--accent-primary);
 }
 
 header h1 {
     font-size: 3em;
-    color: #e94560;
+    color: var(--accent-primary);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 10px;
 }
@@ -50,7 +63,7 @@ header h1 {
 
 .tagline {
     font-size: 1.2em;
-    color: #f1f1f1;
+    color: var(--text-primary);
     font-style: italic;
 }
 
@@ -65,19 +78,19 @@ section {
 
 section h2 {
     font-size: 2em;
-    color: #e94560;
+    color: var(--accent-primary);
     margin-bottom: 30px;
-    border-bottom: 2px solid rgba(233, 69, 96, 0.3);
+    border-bottom: 2px solid rgba(0, 196, 140, 0.35);
     padding-bottom: 10px;
 }
 
 /* Featured Section */
 .featured-content {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-surface);
     border-radius: 10px;
     padding: 30px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(233, 69, 96, 0.2);
+    border: 1px solid rgba(0, 196, 140, 0.2);
 }
 
 .featured-item {
@@ -94,14 +107,14 @@ section h2 {
 
 .featured-info h3 {
     font-size: 2em;
-    color: #e94560;
+    color: var(--accent-primary);
     margin-bottom: 10px;
 }
 
 .featured-info .type {
     display: inline-block;
-    background: #e94560;
-    color: white;
+    background: var(--accent-secondary);
+    color: var(--text-primary);
     padding: 5px 15px;
     border-radius: 20px;
     font-size: 0.9em;
@@ -121,16 +134,16 @@ section h2 {
 }
 
 .album-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-surface);
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid rgba(233, 69, 96, 0.2);
+    border: 1px solid rgba(0, 196, 140, 0.2);
 }
 
 .album-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(233, 69, 96, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 230, 163, 0.28);
 }
 
 .album-card img {
@@ -144,25 +157,25 @@ section h2 {
 }
 
 .album-info h3 {
-    color: #e94560;
+    color: var(--accent-primary);
     margin-bottom: 10px;
     font-size: 1.5em;
 }
 
 .album-info .year {
-    color: #999;
+    color: var(--text-muted);
     font-size: 0.9em;
     margin-bottom: 10px;
 }
 
 .album-info .description {
-    color: #ccc;
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
 .album-info .track-count {
     margin-top: 15px;
-    color: #e94560;
+    color: var(--accent-secondary);
     font-weight: bold;
 }
 
@@ -174,16 +187,16 @@ section h2 {
 }
 
 .song-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-surface);
     border-radius: 8px;
     padding: 20px;
-    border: 1px solid rgba(233, 69, 96, 0.2);
+    border: 1px solid rgba(196, 106, 45, 0.25);
     transition: transform 0.3s ease;
 }
 
 .song-card:hover {
     transform: translateX(5px);
-    border-color: #e94560;
+    border-color: var(--accent-secondary-hover);
 }
 
 .song-card img {
@@ -195,33 +208,37 @@ section h2 {
 }
 
 .song-card h3 {
-    color: #e94560;
+    color: var(--accent-primary);
     margin-bottom: 8px;
     font-size: 1.2em;
 }
 
 .song-card .album-name {
-    color: #999;
+    color: var(--text-muted);
     font-size: 0.9em;
     margin-bottom: 10px;
 }
 
 .song-card .duration {
-    color: #ccc;
+    color: var(--text-secondary);
     font-size: 0.9em;
 }
 
 /* Footer */
 footer {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--bg-overlay);
     padding: 30px 0;
     text-align: center;
-    border-top: 3px solid #e94560;
+    border-top: 3px solid var(--accent-primary);
     margin-top: 60px;
 }
 
 footer p {
-    color: #999;
+    color: var(--text-muted);
+}
+
+.featured-info .type:hover {
+    background: var(--accent-secondary-hover);
 }
 
 /* Responsive Design */
