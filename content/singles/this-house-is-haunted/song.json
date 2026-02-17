@@ -4,6 +4,9 @@
   "releaseDate": "2026-02-16",
   "artwork": "artwork.jpg",
   "audioFile": "this-house-is-haunted.mp3",
+  "videoFile": "this-house-is-haunted.mp4",
   "lyrics": "lyrics.txt",
-  "description": "A haunting standalone single exploring memories and echoes that linger within an old house."
+  "description": "",
+  "spotifyUrl": "https://open.spotify.com/track/4HbeoZJvuqT2ihocgzW9t6?si=8434676ae4104994",
+  "videoUrl": ""
 }
