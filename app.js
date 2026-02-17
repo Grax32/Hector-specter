@@ -92,8 +92,8 @@ async function loadAlbums() {
             const response = await fetch(`${albumPath}/album.json`);
             const albumData = await response.json();
             albumData.path = albumPath;
-            // Only add albums that are marked as visible
-            if (albumData.visible) {
+            // Only add albums that are marked as visible (or don't have the visible property, defaulting to true)
+            if (albumData.visible !== false) {
                 albums.push(albumData);
             }
         } catch (error) {
