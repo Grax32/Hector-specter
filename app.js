@@ -200,11 +200,11 @@ function displayFeatured() {
     if (item.videoFile) {
         mediaHtml += `\n                <video controls class="featured-video">\n                    <source src="${item.path}/${item.videoFile}" type="video/mp4">\n                    Your browser does not support the video tag.\n                </video>`;
     } else if (item.videoUrl) {
-        mediaHtml += `\n                <p><a href="${item.videoUrl}" target="_blank" rel="noopener">Watch video</a></p>`;
+        mediaHtml += `\n                <p><a class="media-link media-link-video" href="${item.videoUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Watch video</a></p>`;
     }
 
     if (item.spotifyUrl) {
-        mediaHtml += `\n                <p><a href="${item.spotifyUrl}" target="_blank" rel="noopener">Listen on Spotify</a></p>`;
+        mediaHtml += `\n                <p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
     }
 
     featuredContainer.innerHTML = `
@@ -274,11 +274,11 @@ function displaySongs() {
         if (song.videoFile) {
             media += `\n                <video controls class="song-video">\n                    <source src="${song.path}/${song.videoFile}" type="video/mp4">\n                    Your browser does not support the video tag.\n                </video>`;
         } else if (song.videoUrl) {
-            media += `\n                <p><a href="${song.videoUrl}" target="_blank" rel="noopener">Watch video</a></p>`;
+            media += `\n                <p><a class="media-link media-link-video" href="${song.videoUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Watch video</a></p>`;
         }
 
         if (song.spotifyUrl) {
-            media += `\n                <p><a href="${song.spotifyUrl}" target="_blank" rel="noopener">Listen on Spotify</a></p>`;
+            media += `\n                <p><a class="media-link media-link-spotify" href="${song.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
         }
 
         return `
