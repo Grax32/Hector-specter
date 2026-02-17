@@ -224,6 +224,52 @@ section h2 {
     font-size: 0.9em;
 }
 
+
+.media-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(244, 244, 242, 0.2);
+    padding: 7px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.media-link + .media-link {
+    margin-left: 8px;
+}
+
+.media-link-icon {
+    font-size: 0.95em;
+    line-height: 1;
+}
+
+.media-link-video {
+    border-color: rgba(0, 196, 140, 0.45);
+}
+
+.media-link-video:hover,
+.media-link-video:focus-visible {
+    color: #001a12;
+    background: var(--accent-primary-hover);
+    border-color: var(--accent-primary-hover);
+}
+
+.media-link-spotify {
+    border-color: rgba(196, 106, 45, 0.55);
+}
+
+.media-link-spotify:hover,
+.media-link-spotify:focus-visible {
+    color: #1d0f06;
+    background: var(--accent-secondary-hover);
+    border-color: var(--accent-secondary-hover);
+}
+
 /* Footer */
 footer {
     background: var(--bg-overlay);
