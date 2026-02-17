@@ -164,6 +164,10 @@ function parseReleaseDate(item) {
 // Display the featured item (latest release)
 function displayFeatured() {
     const featuredContainer = document.getElementById('featured-content');
+    
+    if (!featuredContainer) {
+        return;
+    }
 
     if (!config.featured) {
         featuredContainer.innerHTML = '<p>No featured content available.</p>';
@@ -221,6 +225,10 @@ function displayFeatured() {
 // Display all albums
 function displayAlbums() {
     const albumsList = document.getElementById('albums-list');
+    
+    if (!albumsList) {
+        return;
+    }
 
     if (albums.length === 0) {
         albumsList.innerHTML = '<p>No albums available.</p>';
@@ -243,6 +251,10 @@ function displayAlbums() {
 // Display all songs
 function displaySongs() {
     const songsList = document.getElementById('songs-list');
+    
+    if (!songsList) {
+        return;
+    }
 
     if (songs.length === 0) {
         songsList.innerHTML = '<p>No songs available.</p>';

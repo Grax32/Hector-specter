@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Functions Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #666;
+            margin-top: 20px;
+        }
+        .summary {
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3ff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Display Functions Test Suite</h1>
+    <p>Testing that display functions handle missing DOM elements gracefully</p>
+    
+    <div id="test-results"></div>
+
+    <script>
+        // Load the app.js code (we'll define a minimal version here for testing)
+        let config = {};
+        let albums = [];
+        let songs = [];
+
+        // Include the functions to test
+        function displayFeatured() {
+            const featuredContainer = document.getElementById('featured-content');
+            
+            if (!featuredContainer) {
+                return;
+            }
+
+            if (!config.featured) {
+                featuredContainer.innerHTML = '<p>No featured content available.</p>';
+                return;
+            }
+
+            const featured = config.featured;
+            let item = null;
+            let itemType = '';
+
+            if (featured.type === 'album') {
+                item = albums.find(a => a.path === featured.path);
+                itemType = 'Album';
+            } else if (featured.type === 'song') {
+                item = songs.find(s => s.path === featured.path);
+                itemType = item?.releaseType === 'single' ? 'Single' : 'Song';
+            }
+
+            if (!item) {
+                featuredContainer.innerHTML = '<p>Featured item not found.</p>';
+                return;
+            }
+
+            const artworkPath = `${item.path}/${item.artwork}`;
+            featuredContainer.innerHTML = `
+                <div class="featured-item">
+                    <img src="${artworkPath}" alt="${item.title}">
+                    <div class="featured-info">
+                        <h3>${item.title}</h3>
+                        <span class="type">${itemType}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayAlbums() {
+            const albumsList = document.getElementById('albums-list');
+            
+            if (!albumsList) {
+                return;
+            }
+
+            if (albums.length === 0) {
+                albumsList.innerHTML = '<p>No albums available.</p>';
+                return;
+            }
+
+            albumsList.innerHTML = albums.map(album => `
+                <div class="album-card">
+                    <img src="${album.path}/${album.artwork}" alt="${album.title}">
+                    <div class="album-info">
+                        <h3>${album.title}</h3>
+                        <p class="year">${album.year}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displaySongs() {
+            const songsList = document.getElementById('songs-list');
+            
+            if (!songsList) {
+                return;
+            }
+
+            if (songs.length === 0) {
+                songsList.innerHTML = '<p>No songs available.</p>';
+                return;
+            }
+
+            songsList.innerHTML = songs.map(song => `
+                <div class="song-card">
+                    <h3>${song.title}</h3>
+                </div>
+            `).join('');
+        }
+
+        // Test runner
+        const results = [];
+
+        function runTest(testName, testFn) {
+            try {
+                testFn();
+                results.push({ name: testName, passed: true, error: null });
+                return true;
+            } catch (error) {
+                results.push({ name: testName, passed: false, error: error.message });
+                return false;
+            }
+        }
+
+        // Test 1: displayFeatured with missing element
+        runTest('displayFeatured handles missing element', () => {
+            // Setup: No featured-content element exists
+            const element = document.getElementById('featured-content');
+            if (element) {
+                throw new Error('Test setup error: featured-content should not exist');
+            }
+            
+            // Should not throw an error
+            displayFeatured();
+        });
+
+        // Test 2: displayAlbums with missing element
+        runTest('displayAlbums handles missing element', () => {
+            // Setup: No albums-list element exists
+            const element = document.getElementById('albums-list');
+            if (element) {
+                throw new Error('Test setup error: albums-list should not exist');
+            }
+            
+            // Should not throw an error
+            displayAlbums();
+        });
+
+        // Test 3: displaySongs with missing element
+        runTest('displaySongs handles missing element', () => {
+            // Setup: No songs-list element exists
+            const element = document.getElementById('songs-list');
+            if (element) {
+                throw new Error('Test setup error: songs-list should not exist');
+            }
+            
+            // Should not throw an error
+            displaySongs();
+        });
+
+        // Test 4: displayFeatured with existing element
+        runTest('displayFeatured works with existing element', () => {
+            // Create the element
+            const div = document.createElement('div');
+            div.id = 'featured-content';
+            document.body.appendChild(div);
+            
+            try {
+                config.featured = {
+                    type: 'album',
+                    path: 'test/album'
+                };
+                albums = [{
+                    path: 'test/album',
+                    title: 'Test Album',
+                    artwork: 'test.jpg'
+                }];
+                
+                displayFeatured();
+                
+                if (!div.innerHTML.includes('Test Album')) {
+                    throw new Error('Featured content was not rendered correctly');
+                }
+            } finally {
+                // Cleanup
+                document.body.removeChild(div);
+                config = {};
+                albums = [];
+            }
+        });
+
+        // Test 5: displayAlbums with existing element
+        runTest('displayAlbums works with existing element', () => {
+            // Create the element
+            const div = document.createElement('div');
+            div.id = 'albums-list';
+            document.body.appendChild(div);
+            
+            try {
+                albums = [{
+                    path: 'test/album',
+                    title: 'Test Album',
+                    artwork: 'test.jpg',
+                    year: '2026'
+                }];
+                
+                displayAlbums();
+                
+                if (!div.innerHTML.includes('Test Album')) {
+                    throw new Error('Albums were not rendered correctly');
+                }
+            } finally {
+                // Cleanup
+                document.body.removeChild(div);
+                albums = [];
+            }
+        });
+
+        // Test 6: displaySongs with existing element
+        runTest('displaySongs works with existing element', () => {
+            // Create the element
+            const div = document.createElement('div');
+            div.id = 'songs-list';
+            document.body.appendChild(div);
+            
+            try {
+                songs = [{
+                    path: 'test/song',
+                    title: 'Test Song',
+                    releaseDate: '2026-01-01'
+                }];
+                
+                displaySongs();
+                
+                if (!div.innerHTML.includes('Test Song')) {
+                    throw new Error('Songs were not rendered correctly');
+                }
+            } finally {
+                // Cleanup
+                document.body.removeChild(div);
+                songs = [];
+            }
+        });
+
+        // Display results
+        const resultsDiv = document.getElementById('test-results');
+        let passCount = 0;
+        let failCount = 0;
+
+        results.forEach(result => {
+            if (result.passed) {
+                passCount++;
+            } else {
+                failCount++;
+            }
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${result.passed ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `
+                <strong>${result.passed ? '✓' : '✗'} ${result.name}</strong>
+                ${result.error ? `<br><em>Error: ${result.error}</em>` : ''}
+            `;
+            resultsDiv.appendChild(resultDiv);
+        });
+
+        // Display summary
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'summary';
+        summaryDiv.innerHTML = `
+            <h2>Test Summary</h2>
+            <p>Total: ${results.length} tests</p>
+            <p style="color: #155724;">Passed: ${passCount}</p>
+            <p style="color: #721c24;">Failed: ${failCount}</p>
+            <p><strong>${failCount === 0 ? 'All tests passed! ✓' : 'Some tests failed! ✗'}</strong></p>
+        `;
+        resultsDiv.appendChild(summaryDiv);
+    </script>
+</body>
+</html>
