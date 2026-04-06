@@ -12,7 +12,6 @@ A self-contained, configurable website for showcasing music albums and songs. Th
 - **Song Organization**: Each song folder contains:
   - Song metadata (song.json)
   - Song artwork
-  - Lyrics file
   - Audio file (MP3 or other formats)
 - **Responsive Design**: Mobile-friendly layout that works on all devices
 - **Modern UI**: Clean, professional design with smooth animations
@@ -33,7 +32,6 @@ Hector-specter/
             └── [song-folders]/
                 ├── song.json       # Song metadata
                 ├── artwork.jpg     # Song artwork
-                ├── lyrics.txt      # Song lyrics
                 └── [audio-file]    # Audio file (e.g., .mp3)
 ```
 
@@ -46,14 +44,13 @@ The main configuration file controls which content is featured and which albums 
 ```json
 {
   "featured": {
-    "type": "album",           // or "song"
-    "path": "content/albums/midnight-echoes"
+    "type": "song",
+    "path": "content/singles/this-house-is-haunted"
   },
-  "albums": [
-    "content/albums/midnight-echoes"
-  ],
+  "albums": [],
   "singles": [
-    "content/singles/night-drive"
+    "content/singles/this-house-is-haunted",
+    "content/singles/lean-and-flow"
   ]
 }
 ```
@@ -72,7 +69,7 @@ You can also publish songs that are not part of an album by adding a `singles` a
 }
 ```
 
-Each entry must point to a folder that contains a `song.json` file plus the related artwork/audio/lyrics files (same structure as an album song folder).
+Each entry must point to a folder that contains a `song.json` file plus the related artwork/audio files (same structure as an album song folder).
 
 ### Album Configuration (album.json)
 
@@ -103,7 +100,6 @@ Each song folder contains a `song.json` file:
   "releaseDate": "2026-01-15",
   "artwork": "artwork.jpg",
   "audioFile": "song-name.mp3",
-  "lyrics": "lyrics.txt",
   "description": "Song description"
 }
 ```
@@ -132,7 +128,6 @@ Each song folder contains a `song.json` file:
 5. In each song folder, add:
    - `song.json` with song metadata
    - `artwork.jpg` for song artwork
-   - `lyrics.txt` with lyrics
    - Audio file (e.g., `song-name.mp3`)
 6. Update `content/albums/new-album/album.json` to list all song folders
 7. Add the album path to `config.json` in the `albums` array
@@ -156,19 +151,14 @@ Edit `config.json` and update the `featured` section:
 {
   "featured": {
     "type": "song",
-    "path": "content/albums/album-name/song-folder"
+    "path": "content/singles/your-single-name"
   }
 }
 ```
 
 ## Example Content
 
-The repository includes an example album "Midnight Echoes" with three songs:
-- Shadow Dance
-- Neon Dreams
-- Electric Soul
-
-This serves as a template for adding your own content.
+The repository includes standalone singles in `content/singles/` (for example: `this-house-is-haunted`, `lean-and-flow`, and `deadly-damsel-epic-poem`) that serve as templates for adding your own releases.
 
 ## Customization
 

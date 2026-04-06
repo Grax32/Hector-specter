@@ -24,14 +24,13 @@ Edit `config.json`:
 ```json
 {
   "featured": {
-    "type": "album",  // or "song"
-    "path": "content/albums/midnight-echoes"
+    "type": "song",
+    "path": "content/singles/this-house-is-haunted"
   },
-  "albums": [
-    "content/albums/midnight-echoes"
-  ],
+  "albums": [],
   "singles": [
-    "content/singles/night-drive"
+    "content/singles/this-house-is-haunted",
+    "content/singles/lean-and-flow"
   ]
 }
 ```
@@ -65,21 +64,18 @@ Edit `config.json`:
      "releaseDate": "2026-01-15",
      "artwork": "artwork.jpg",
      "audioFile": "song.mp3",
-     "lyrics": "lyrics.txt",
      "description": "Song description"
    }
    ```
 3. Add song artwork as `artwork.jpg`
-4. Add lyrics as `lyrics.txt`
-5. Add audio file (e.g., `song.mp3`)
-6. Update parent `album.json` to include the song folder name
+4. Add audio file (e.g., `song.mp3`)
+5. Update parent `album.json` to include the song folder name
 
 ## File Requirements
 
 - **Album artwork**: JPG/PNG/SVG, recommended 500x500px or larger
 - **Song artwork**: JPG/PNG/SVG, recommended 500x500px or larger
 - **Audio files**: MP3 or any web-compatible format
-- **Lyrics**: Plain text file (.txt)
 
 ## Customization
 
@@ -100,6 +96,6 @@ Edit `config.json`:
 
 1. Create folder: `content/singles/your-single-name/`
 2. Add `song.json` (same fields as album songs)
-3. Add artwork, lyrics, and audio files
+3. Add artwork and audio files
 4. Add the folder path to `config.json` under `singles`
 

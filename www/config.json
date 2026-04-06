@@ -1,0 +1,14 @@
+{
+  "featured": {
+    "type": "album",
+    "path": "content/albums/system-failure"
+  },
+  "albums": [
+    "content/albums/system-failure"
+  ],
+  "singles": [
+    "content/singles/this-house-is-haunted",
+    "content/singles/lean-and-flow",
+    "content/singles/deadly-damsel-epic-poem"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-04-06T12:59:35.093Z",
+  "sourceDir": "www/raw",
+  "releaseCount": 4,
+  "releases": [
+    {
+      "sourceFile": "Hector Specter - Deadly Damsel (Epic Poem) - DistroKid.mhtml",
+      "artist": "Hector Specter",
+      "releaseTitle": "Deadly Damsel (Epic Poem)",
+      "releaseDateText": "April 3, 2026",
+      "releaseDate": "2026-04-03",
+      "songCount": 1,
+      "upc": "825583758922",
+      "spotifyUrl": "https://open.spotify.com/album/2oqYWIeflntxNAb7RYI1yZ",
+      "artworkUrl": "http://s3.amazonaws.com/gather.fandalism.com/3000x3000-11652129--8AD65174-E34D-48E7-9BA3EA8581B1BF89--0--9950279--ChatGPTImageApr32026120055AMgigapixelstandardscale300x.jpg",
+      "tracks": [
+        {
+          "trackNumber": 1,
+          "title": "Deadly Damsel (Epic Poem)",
+          "isrc": "QZTB82623980"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Hector Specter - Lean and Flow - DistroKid.mhtml",
+      "artist": "Hector Specter",
+      "releaseTitle": "Lean and Flow",
+      "releaseDateText": "March 2, 2026",
+      "releaseDate": "2026-03-02",
+      "songCount": 1,
+      "upc": "821300489445",
+      "spotifyUrl": "https://open.spotify.com/album/0IAZamJKoiuBTsh27Zw17V",
+      "artworkUrl": "http://s3.amazonaws.com/gather.fandalism.com/3000x3000-11652129--6E34DE05-6FBD-4D64-A29D2D82D8352D87--0--3141991--54156E514B8D4A7BB25A710838110C98.jpg",
+      "tracks": [
+        {
+          "trackNumber": 1,
+          "title": "Lean and Flow",
+          "isrc": "QZMEQ2615938"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Hector Specter - System Failure - DistroKid.mhtml",
+      "artist": "Hector Specter",
+      "releaseTitle": "System Failure",
+      "releaseDateText": "April 9, 2026",
+      "releaseDate": "2026-04-09",
+      "songCount": 5,
+      "upc": "825626164338",
+      "spotifyUrl": "",
+      "artworkUrl": "http://s3.amazonaws.com/gather.fandalism.com/3000x3000-11652129--4C5392F0-B80F-4BBD-BD7F9DE88150BE2C--0--15959163--7bfa8aa53aba4c27b9f97ca8273789f3gigapixelstandardscale300x.jpg",
+      "tracks": [
+        {
+          "trackNumber": 1,
+          "title": "This is Not Estelle Getty's Kubernetes (feat. Rhett Calder)",
+          "isrc": "QZTBA2616285"
+        },
+        {
+          "trackNumber": 2,
+          "title": "Chai Break Deploy (feat. Deccan Static)",
+          "isrc": "QZTBA2616286"
+        },
+        {
+          "trackNumber": 3,
+          "title": "Docker Talk",
+          "isrc": "QZTBA2616287"
+        },
+        {
+          "trackNumber": 4,
+          "title": "I'm the Architect (ship it)",
+          "isrc": "QZTBA2616288"
+        },
+        {
+          "trackNumber": 5,
+          "title": "Kube Cluster Healing (feat. Caitlyn Smith)",
+          "isrc": "QZTBA2616290"
+        }
+      ]
+    },
+    {
+      "sourceFile": "Hector Specter - This House is Haunted - DistroKid.mhtml",
+      "artist": "Hector Specter",
+      "releaseTitle": "This House is Haunted",
+      "releaseDateText": "February 13, 2026",
+      "releaseDate": "2026-02-13",
+      "songCount": 1,
+      "upc": "821430214481",
+      "spotifyUrl": "https://open.spotify.com/album/5ZzPRrMbvQ7kTLMpEWK7hz",
+      "artworkUrl": "http://s3.amazonaws.com/gather.fandalism.com/3000x3000-11652129--158D6417-5CEE-46E3-8CA92F8C4872501C--0--221043--CE08BC5FE04349F6AB7E67ED86CBAD27.jpg",
+      "tracks": [
+        {
+          "trackNumber": 1,
+          "title": "This House is Haunted",
+          "isrc": "QZK6K2641215"
+        }
+      ]
+    }
+  ]
+}
