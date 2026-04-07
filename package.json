@@ -1,0 +1,24 @@
+{
+    "name": "hector-specter",
+    "version": "1.0.0",
+    "description": "A self-contained, configurable website for showcasing music albums and songs. This website is designed for Hector Specter, a musician and music producer, and allows easy updates by simply modifying JSON configuration files.",
+    "homepage": "https://github.com/Grax32/Hector-specter#readme",
+    "bugs": {
+        "url": "https://github.com/Grax32/Hector-specter/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Grax32/Hector-specter.git"
+    },
+    "license": "ISC",
+    "author": "",
+    "type": "commonjs",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "http-server ./www -p 12554"
+    },
+    "devDependencies": {
+        "http-server": "^14.1.1"
+    }
+}

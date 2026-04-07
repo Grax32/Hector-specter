@@ -2,6 +2,7 @@
 let config = {};
 let albums = [];
 let songs = [];
+let singles = [];
 
 // Load configuration and initialize the app
 async function init() {
@@ -19,10 +20,11 @@ async function init() {
         // Display featured content
         displayFeatured();
 
-        // Display albums
-        displayAlbums();
+        // Display library navigation + results
+        setupLibraryNavigation();
+        displayLibrary();
 
-        // Display songs
+        // Display songs for any legacy/optional section
         displaySongs();
         // Setup artist video (plays once muted and freezes on last frame)
         setupArtistVideo();
@@ -109,8 +111,10 @@ async function loadSongFromPath(fullPath, metadata = {}) {
         songData.path = fullPath;
         Object.assign(songData, metadata);
         songs.push(songData);
+        return songData;
     } catch (error) {
         console.error(`Error loading song from ${fullPath}:`, error);
+        return null;
     }
 }
 
@@ -148,10 +152,14 @@ async function loadSongs() {
         }
 
         seenPaths.add(singlePath);
-        await loadSongFromPath(singlePath, {
+        const singleSong = await loadSongFromPath(singlePath, {
             albumName: 'Single',
             releaseType: 'single'
         });
+
+        if (singleSong && singleSong.visible !== false) {
+            singles.push(singleSong);
+        }
     }
 }
 
@@ -225,30 +233,139 @@ function displayFeatured() {
     `;
 }
 
-// Display all albums
-function displayAlbums() {
-    const albumsList = document.getElementById('albums-list');
-    
-    if (!albumsList) {
+function setupLibraryNavigation() {
+    const tabs = document.querySelectorAll('.library-tab');
+    const searchInput = document.getElementById('library-search');
+    const closeButton = document.getElementById('album-detail-close');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(button => button.classList.remove('is-active'));
+            tab.classList.add('is-active');
+            hideAlbumDetail();
+            displayLibrary();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            hideAlbumDetail();
+            displayLibrary();
+        });
+    }
+
+    if (closeButton) {
+        closeButton.addEventListener('click', hideAlbumDetail);
+    }
+}
+
+function getActiveTypeFilter() {
+    const activeTab = document.querySelector('.library-tab.is-active');
+    return activeTab?.dataset.typeFilter || 'all';
+}
+
+function displayLibrary() {
+    const libraryResults = document.getElementById('library-results');
+    if (!libraryResults) {
         return;
     }
 
-    if (albums.length === 0) {
-        albumsList.innerHTML = '<p>No albums available.</p>';
+    const filterType = getActiveTypeFilter();
+    const query = (document.getElementById('library-search')?.value || '').trim().toLowerCase();
+
+    const libraryItems = [
+        ...albums.map(album => ({
+            type: 'album',
+            path: album.path,
+            title: album.title,
+            subtitle: album.releaseDate || album.year || '',
+            description: album.description || '',
+            artwork: album.artwork ? `${album.path}/${album.artwork}` : '',
+            searchableText: `${album.title || ''} ${album.description || ''} ${album.year || ''} ${album.releaseDate || ''}`.toLowerCase()
+        })),
+        ...singles.map(single => ({
+            type: 'single',
+            title: single.title,
+            subtitle: single.releaseDate || '',
+            description: single.duration ? `Duration: ${single.duration}` : '',
+            artwork: single.artwork ? `${single.path}/${single.artwork}` : '',
+            searchableText: `${single.title || ''} ${single.releaseDate || ''} ${single.duration || ''}`.toLowerCase()
+        }))
+    ];
+
+    const filteredItems = libraryItems.filter(item => {
+        const typeMatches = filterType === 'all' || item.type === filterType;
+        const textMatches = !query || item.searchableText.includes(query);
+        return typeMatches && textMatches;
+    });
+
+    if (filteredItems.length === 0) {
+        libraryResults.innerHTML = '<p class="library-empty">No matching albums or singles.</p>';
         return;
     }
 
-    albumsList.innerHTML = albums.map(album => `
-        <div class="album-card">
-            <img src="${album.path}/${album.artwork}" alt="${album.title}">
-            <div class="album-info">
-                <h3>${album.title}</h3>
-                <p class="year">${album.year}</p>
-                ${album.description ? `<p class="description">${album.description}</p>` : ''}
-                ${album.songs ? `<p class="track-count">${album.songs.length} tracks</p>` : ''}
+    libraryResults.innerHTML = filteredItems.map(item => `
+        <article class="library-card ${item.type === 'album' ? 'library-card-clickable' : ''}" ${item.type === 'album' ? `data-album-path="${item.path}"` : ''}>
+            ${item.artwork ? `<img src="${item.artwork}" alt="${item.title}">` : ''}
+            <div class="library-card-info">
+                <span class="library-card-type">${item.type === 'album' ? 'Album' : 'Single'}</span>
+                <h3>${item.title}</h3>
+                ${item.subtitle ? `<p class="year">${item.subtitle}</p>` : ''}
+                ${item.description ? `<p class="description">${item.description}</p>` : ''}
             </div>
-        </div>
+        </article>
     `).join('');
+
+    libraryResults.querySelectorAll('.library-card-clickable').forEach(card => {
+        card.addEventListener('click', () => {
+            const albumPath = card.getAttribute('data-album-path');
+            if (albumPath) {
+                showAlbumDetail(albumPath);
+            }
+        });
+    });
+}
+
+function hideAlbumDetail() {
+    const detail = document.getElementById('album-detail');
+    if (detail) {
+        detail.hidden = true;
+    }
+}
+
+function showAlbumDetail(albumPath) {
+    const album = albums.find(a => a.path === albumPath);
+    if (!album) {
+        return;
+    }
+
+    const detail = document.getElementById('album-detail');
+    const title = document.getElementById('album-detail-title');
+    const tracks = document.getElementById('album-detail-tracks');
+
+    if (!detail || !title || !tracks) {
+        return;
+    }
+
+    const albumSongs = songs.filter(song => song.releaseType === 'album' && song.albumPath === albumPath);
+    const songsByPath = new Map(albumSongs.map(song => [song.path, song]));
+    const orderedSongs = (album.songs || [])
+        .map(relativePath => songsByPath.get(`${album.path}/${relativePath}`))
+        .filter(Boolean);
+    const tracksToShow = orderedSongs.length > 0 ? orderedSongs : albumSongs;
+
+    title.textContent = `${album.title} - Track List`;
+
+    if (tracksToShow.length === 0) {
+        tracks.innerHTML = '<li>No tracks found for this album.</li>';
+    } else {
+        tracks.innerHTML = tracksToShow
+            .map(song => `<li>${song.title}${song.duration ? ` (${song.duration})` : ''}</li>`)
+            .join('');
+    }
+
+    detail.hidden = false;
+    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Display all songs

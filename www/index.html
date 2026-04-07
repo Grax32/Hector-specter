@@ -10,8 +10,8 @@
     <header>
         <div class="container">
             <div class="artist-media">
-                <video id="artist-video" class="artist-video" autoplay muted playsinline preload="metadata" poster="artwork.jpg">
-                    <source src="/artist/hector-sepcter.mp4" type="video/mp4">
+                <video id="artist-video" class="artist-video" autoplay muted playsinline preload="metadata" poster="/artist/hector-specter.png">
+                    <source src="/artist/hector-specter.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
@@ -29,21 +29,30 @@
             </div>
         </section>
 
-<!--         -- Albums Section --
-        <section id="albums" class="albums">
-            <h2>Albums</h2>
-            <div id="albums-list" class="albums-list">
-                <p>Loading albums...</p>
+        <section id="library" class="library">
+            <h2>Music Library</h2>
+            <div class="library-controls">
+                <div class="library-nav" role="tablist" aria-label="Library type filters">
+                    <button type="button" class="library-tab is-active" data-type-filter="all">All</button>
+                    <button type="button" class="library-tab" data-type-filter="album">Albums</button>
+                    <button type="button" class="library-tab" data-type-filter="single">Singles</button>
+                </div>
+                <label class="library-search-wrap" for="library-search">
+                    <span class="library-search-label">Filter</span>
+                    <input id="library-search" class="library-search" type="search" placeholder="Type to filter albums or singles" autocomplete="off">
+                </label>
+            </div>
+            <div id="library-results" class="library-grid">
+                <p>Loading library...</p>
+            </div>
+            <div id="album-detail" class="album-detail" hidden>
+                <div class="album-detail-header">
+                    <h3 id="album-detail-title"></h3>
+                    <button type="button" id="album-detail-close" class="album-detail-close">Close</button>
+                </div>
+                <ol id="album-detail-tracks" class="album-detail-tracks"></ol>
             </div>
         </section>
-
-         ! -- Songs Section -- >
-        <section id="songs" class="songs">
-            <h2>Latest Songs</h2>
-            <div id="songs-list" class="songs-list">
-                <p>Loading songs...</p>
-            </div>
-        </section> -->
     </main>
 
     <footer>
