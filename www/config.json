@@ -4,9 +4,11 @@
     "path": "content/albums/system-failure"
   },
   "albums": [
-    "content/albums/system-failure"
+    "content/albums/system-failure",
+    "content/albums/hectors-house"
   ],
   "singles": [
+    "content/singles/this-neighborhood-is-so-elite",
     "content/singles/this-house-is-haunted",
     "content/singles/lean-and-flow",
     "content/singles/deadly-damsel-epic-poem"

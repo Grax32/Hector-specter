@@ -342,8 +342,9 @@ function showAlbumDetail(albumPath) {
     const detail = document.getElementById('album-detail');
     const title = document.getElementById('album-detail-title');
     const tracks = document.getElementById('album-detail-tracks');
+    const media = document.getElementById('album-detail-media');
 
-    if (!detail || !title || !tracks) {
+    if (!detail || !title || !tracks || !media) {
         return;
     }
 
@@ -355,6 +356,9 @@ function showAlbumDetail(albumPath) {
     const tracksToShow = orderedSongs.length > 0 ? orderedSongs : albumSongs;
 
     title.textContent = `${album.title} - Track List`;
+    media.innerHTML = album.spotifyUrl
+        ? `<p><a class="media-link media-link-spotify" href="${album.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`
+        : '';
 
     if (tracksToShow.length === 0) {
         tracks.innerHTML = '<li>No tracks found for this album.</li>';
