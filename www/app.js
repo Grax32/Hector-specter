@@ -283,6 +283,7 @@ function displayLibrary() {
             type: 'album',
             path: album.path,
             title: album.title,
+            releaseDate: album.releaseDate || '',
             subtitle: album.releaseDate || album.year || '',
             description: album.description || '',
             spotifyUrl: album.spotifyUrl || '',
@@ -292,6 +293,7 @@ function displayLibrary() {
         ...singles.map(single => ({
             type: 'single',
             title: single.title,
+            releaseDate: single.releaseDate || '',
             subtitle: single.releaseDate || '',
             description: single.duration ? `Duration: ${single.duration}` : '',
             spotifyUrl: single.spotifyUrl || '',
@@ -330,7 +332,7 @@ function displayLibrary() {
                 <h3>${item.title}</h3>
                 ${item.subtitle ? `<p class="year">${item.subtitle}</p>` : ''}
                 ${item.description ? `<p class="description">${item.description}</p>` : ''}
-                ${item.spotifyUrl ? `<p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>` : ''}
+                ${shouldShowSpotifyLink(item) ? `<p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>` : ''}
             </div>
         </article>
     `).join('');
