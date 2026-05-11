@@ -38,6 +38,20 @@
     </header>
 
     <main class="container">
+        <section id="album-page" class="album-page" hidden>
+            <button type="button" id="album-page-back" class="album-page-back">Back to Music Library</button>
+            <div class="album-page-hero">
+                <img id="album-page-artwork" class="album-page-artwork" alt="Album artwork">
+                <div class="album-page-headline">
+                    <p class="album-page-kicker">Album</p>
+                    <h2 id="album-page-title"></h2>
+                    <p id="album-page-subtitle" class="album-page-subtitle"></p>
+                    <div id="album-page-media" class="album-page-media"></div>
+                </div>
+            </div>
+            <div id="album-page-songs" class="library-grid album-page-songs"></div>
+        </section>
+
         <!-- Featured Section -->
         <section id="featured" class="featured">
             <h2>Latest Release</h2>
@@ -62,14 +76,6 @@
             </div>
             <div id="library-results" class="library-grid">
                 <p>Loading library...</p>
-            </div>
-            <div id="album-detail" class="album-detail" hidden>
-                <div class="album-detail-header">
-                    <h3 id="album-detail-title"></h3>
-                    <button type="button" id="album-detail-close" class="album-detail-close">Close</button>
-                </div>
-                <div id="album-detail-media" class="album-detail-media"></div>
-                <ol id="album-detail-tracks" class="album-detail-tracks"></ol>
             </div>
         </section>
     </main>

@@ -23,6 +23,7 @@ async function init() {
         // Display library navigation + results
         setupLibraryNavigation();
         displayLibrary();
+        handleRouteChange();
 
         // Display songs for any legacy/optional section
         displaySongs();
@@ -241,7 +242,7 @@ function displayFeatured() {
 function setupLibraryNavigation() {
     const tabs = document.querySelectorAll('.library-tab');
     const searchInput = document.getElementById('library-search');
-    const closeButton = document.getElementById('album-detail-close');
+    const backButton = document.getElementById('album-page-back');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -259,9 +260,11 @@ function setupLibraryNavigation() {
         });
     }
 
-    if (closeButton) {
-        closeButton.addEventListener('click', hideAlbumDetail);
+    if (backButton) {
+        backButton.addEventListener('click', hideAlbumDetail);
     }
+
+    window.addEventListener('hashchange', handleRouteChange);
 }
 
 function getActiveTypeFilter() {
@@ -347,50 +350,160 @@ function displayLibrary() {
     });
 }
 
-function hideAlbumDetail() {
-    const detail = document.getElementById('album-detail');
-    if (detail) {
-        detail.hidden = true;
+function getAlbumPathFromHash() {
+    const hash = window.location.hash || '';
+    if (!hash.startsWith('#album=')) {
+        return '';
+    }
+
+    return decodeURIComponent(hash.slice('#album='.length));
+}
+
+function showLibraryPage() {
+    const featuredSection = document.getElementById('featured');
+    const librarySection = document.getElementById('library');
+    const albumPage = document.getElementById('album-page');
+
+    if (featuredSection) {
+        featuredSection.hidden = false;
+    }
+
+    if (librarySection) {
+        librarySection.hidden = false;
+    }
+
+    if (albumPage) {
+        albumPage.hidden = true;
     }
 }
 
-function showAlbumDetail(albumPath) {
-    const album = albums.find(a => a.path === albumPath);
-    if (!album) {
+function handleRouteChange() {
+    const albumPath = getAlbumPathFromHash();
+    if (albumPath) {
+        showAlbumDetail(albumPath, { updateHash: false });
         return;
     }
 
-    const detail = document.getElementById('album-detail');
-    const title = document.getElementById('album-detail-title');
-    const tracks = document.getElementById('album-detail-tracks');
-    const media = document.getElementById('album-detail-media');
+    showLibraryPage();
+}
 
-    if (!detail || !title || !tracks || !media) {
-        return;
+function hideAlbumDetail() {
+    if (getAlbumPathFromHash()) {
+        const { pathname, search } = window.location;
+        history.pushState(null, '', `${pathname}${search}`);
     }
 
+    showLibraryPage();
+}
+
+function getAlbumSongs(album, albumPath) {
     const albumSongs = songs.filter(song => song.releaseType === 'album' && song.albumPath === albumPath);
     const songsByPath = new Map(albumSongs.map(song => [song.path, song]));
     const orderedSongs = (album.songs || [])
         .map(relativePath => songsByPath.get(`${album.path}/${relativePath}`))
         .filter(Boolean);
-    const tracksToShow = orderedSongs.length > 0 ? orderedSongs : albumSongs;
 
-    title.textContent = `${album.title} - Track List`;
+    return orderedSongs.length > 0 ? orderedSongs : albumSongs;
+}
+
+function renderAlbumSongCard(song, album, index) {
+    const artwork = song.artwork ? `${song.path}/${song.artwork}` : (album.artwork ? `${album.path}/${album.artwork}` : '');
+
+    let mediaHtml = '';
+    if (song.videoUrl) {
+        mediaHtml += `<p><a class="media-link media-link-video" href="${song.videoUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Watch video</a></p>`;
+    }
+
+    if (shouldShowSpotifyLink(song)) {
+        mediaHtml += `<p><a class="media-link media-link-spotify" href="${song.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
+    }
+
+    return `
+        <article class="library-card album-song-card">
+            ${artwork ? `<img src="${artwork}" alt="${song.title}">` : ''}
+            <div class="library-card-info">
+                <span class="library-card-type">Track ${String(index + 1).padStart(2, '0')}</span>
+                <h3>${song.title}</h3>
+                ${song.releaseDate ? `<p class="year">Released: ${song.releaseDate}</p>` : ''}
+                ${song.duration ? `<p class="description">Duration: ${song.duration}</p>` : ''}
+                ${song.description ? `<p class="description">${song.description}</p>` : ''}
+                ${mediaHtml}
+            </div>
+        </article>
+    `;
+}
+
+function showAlbumDetail(albumPath, options = {}) {
+    const { updateHash = true } = options;
+
+    if (updateHash) {
+        const nextHash = `#album=${encodeURIComponent(albumPath)}`;
+        if (window.location.hash !== nextHash) {
+            window.location.hash = nextHash;
+            return;
+        }
+    }
+
+    const album = albums.find(a => a.path === albumPath);
+    if (!album) {
+        if (getAlbumPathFromHash()) {
+            const { pathname, search } = window.location;
+            history.replaceState(null, '', `${pathname}${search}`);
+        }
+        showLibraryPage();
+        return;
+    }
+
+    const featuredSection = document.getElementById('featured');
+    const librarySection = document.getElementById('library');
+    const albumPage = document.getElementById('album-page');
+    const title = document.getElementById('album-page-title');
+    const artwork = document.getElementById('album-page-artwork');
+    const subtitle = document.getElementById('album-page-subtitle');
+    const songsGrid = document.getElementById('album-page-songs');
+    const media = document.getElementById('album-page-media');
+
+    if (!albumPage || !title || !artwork || !subtitle || !songsGrid || !media) {
+        return;
+    }
+
+    const tracksToShow = getAlbumSongs(album, albumPath);
+
+    title.textContent = album.title;
+    subtitle.textContent = [album.releaseDate || album.year, `${tracksToShow.length} ${tracksToShow.length === 1 ? 'track' : 'tracks'}`]
+        .filter(Boolean)
+        .join(' • ');
+
+    if (album.artwork) {
+        artwork.src = `${album.path}/${album.artwork}`;
+        artwork.alt = `${album.title} artwork`;
+        artwork.hidden = false;
+    } else {
+        artwork.hidden = true;
+    }
+
     media.innerHTML = shouldShowSpotifyLink(album)
         ? `<p><a class="media-link media-link-spotify" href="${album.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`
         : '';
 
     if (tracksToShow.length === 0) {
-        tracks.innerHTML = '<li>No tracks found for this album.</li>';
+        songsGrid.innerHTML = '<p class="library-empty">No tracks found for this album.</p>';
     } else {
-        tracks.innerHTML = tracksToShow
-            .map(song => `<li>${song.title}${song.duration ? ` (${song.duration})` : ''}</li>`)
+        songsGrid.innerHTML = tracksToShow
+            .map((song, index) => renderAlbumSongCard(song, album, index))
             .join('');
     }
 
-    detail.hidden = false;
-    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (featuredSection) {
+        featuredSection.hidden = true;
+    }
+
+    if (librarySection) {
+        librarySection.hidden = true;
+    }
+
+    albumPage.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Display all songs

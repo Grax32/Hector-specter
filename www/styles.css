@@ -58,6 +58,8 @@ header h1 {
     display: block;
     margin: 0 auto 15px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    mix-blend-mode: screen;
+    border: 1px solid rgba(0, 196, 140, 0.1);
 }
 
 .tagline {
@@ -232,36 +234,71 @@ section h2 {
     color: var(--text-secondary);
 }
 
-.album-detail {
-    margin-top: 24px;
+.album-page {
     background: var(--bg-surface);
     border: 1px solid rgba(0, 196, 140, 0.25);
     border-radius: 10px;
-    padding: 18px;
+    padding: 22px;
 }
 
-.album-detail-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-}
-
-.album-detail-close {
+.album-page-back {
     border: 1px solid rgba(244, 244, 242, 0.25);
     background: rgba(0, 0, 0, 0.28);
     color: var(--text-primary);
     border-radius: 999px;
-    padding: 6px 12px;
+    padding: 8px 14px;
     cursor: pointer;
+    margin-bottom: 18px;
 }
 
-.album-detail-tracks {
-    margin-left: 20px;
-    color: var(--text-secondary);
+.album-page-hero {
     display: grid;
-    gap: 8px;
+    grid-template-columns: minmax(200px, 280px) 1fr;
+    gap: 22px;
+    align-items: start;
+    margin-bottom: 24px;
+}
+
+.album-page-artwork {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid rgba(0, 196, 140, 0.28);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+.album-page-kicker {
+    display: inline-block;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-secondary-hover);
+    border: 1px solid rgba(196, 106, 45, 0.55);
+    border-radius: 999px;
+    padding: 4px 10px;
+    margin-bottom: 10px;
+}
+
+.album-page-headline h2 {
+    margin-bottom: 8px;
+}
+
+.album-page-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+
+.album-page-songs {
+    margin-top: 8px;
+}
+
+.album-song-card .library-card-type {
+    border-color: rgba(0, 196, 140, 0.5);
+    color: var(--accent-primary-hover);
+}
+
+.album-song-card img {
+    object-fit: contain;
 }
 
 /* Albums List */
@@ -340,9 +377,10 @@ section h2 {
 .song-card img {
     width: 100%;
     height: 200px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 5px;
     margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.25);
 }
 
 .song-card h3 {
@@ -451,5 +489,9 @@ footer p {
 
     .library-search {
         width: 100%;
+    }
+
+    .album-page-hero {
+        grid-template-columns: 1fr;
     }
 }
