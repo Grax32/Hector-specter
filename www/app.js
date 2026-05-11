@@ -172,6 +172,11 @@ function parseReleaseDate(item) {
     return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
 }
 
+function shouldShowSpotifyLink(item) {
+    const releaseTimestamp = parseReleaseDate(item);
+    return Boolean(item?.spotifyUrl) && Number.isFinite(releaseTimestamp) && releaseTimestamp <= Date.now();
+}
+
 // Display the featured item (latest release)
 function displayFeatured() {
     const featuredContainer = document.getElementById('featured-content');
@@ -211,7 +216,7 @@ function displayFeatured() {
         mediaHtml += `\n                <p><a class="media-link media-link-video" href="${item.videoUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Watch video</a></p>`;
     }
 
-    if (item.spotifyUrl) {
+    if (shouldShowSpotifyLink(item)) {
         mediaHtml += `\n                <p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
     }
 
@@ -280,6 +285,7 @@ function displayLibrary() {
             title: album.title,
             subtitle: album.releaseDate || album.year || '',
             description: album.description || '',
+            spotifyUrl: album.spotifyUrl || '',
             artwork: album.artwork ? `${album.path}/${album.artwork}` : '',
             searchableText: `${album.title || ''} ${album.description || ''} ${album.year || ''} ${album.releaseDate || ''}`.toLowerCase()
         })),
@@ -288,6 +294,7 @@ function displayLibrary() {
             title: single.title,
             subtitle: single.releaseDate || '',
             description: single.duration ? `Duration: ${single.duration}` : '',
+            spotifyUrl: single.spotifyUrl || '',
             artwork: single.artwork ? `${single.path}/${single.artwork}` : '',
             searchableText: `${single.title || ''} ${single.releaseDate || ''} ${single.duration || ''}`.toLowerCase()
         }))
@@ -299,12 +306,23 @@ function displayLibrary() {
         return typeMatches && textMatches;
     });
 
-    if (filteredItems.length === 0) {
+    const sortedItems = filteredItems.sort((a, b) => {
+        const typeRankA = a.type === 'album' ? 0 : 1;
+        const typeRankB = b.type === 'album' ? 0 : 1;
+
+        if (typeRankA !== typeRankB) {
+            return typeRankA - typeRankB;
+        }
+
+        return parseReleaseDate(b) - parseReleaseDate(a);
+    });
+
+    if (sortedItems.length === 0) {
         libraryResults.innerHTML = '<p class="library-empty">No matching albums or singles.</p>';
         return;
     }
 
-    libraryResults.innerHTML = filteredItems.map(item => `
+    libraryResults.innerHTML = sortedItems.map(item => `
         <article class="library-card ${item.type === 'album' ? 'library-card-clickable' : ''}" ${item.type === 'album' ? `data-album-path="${item.path}"` : ''}>
             ${item.artwork ? `<img src="${item.artwork}" alt="${item.title}">` : ''}
             <div class="library-card-info">
@@ -312,6 +330,7 @@ function displayLibrary() {
                 <h3>${item.title}</h3>
                 ${item.subtitle ? `<p class="year">${item.subtitle}</p>` : ''}
                 ${item.description ? `<p class="description">${item.description}</p>` : ''}
+                ${item.spotifyUrl ? `<p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>` : ''}
             </div>
         </article>
     `).join('');
@@ -356,7 +375,7 @@ function showAlbumDetail(albumPath) {
     const tracksToShow = orderedSongs.length > 0 ? orderedSongs : albumSongs;
 
     title.textContent = `${album.title} - Track List`;
-    media.innerHTML = album.spotifyUrl
+    media.innerHTML = shouldShowSpotifyLink(album)
         ? `<p><a class="media-link media-link-spotify" href="${album.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`
         : '';
 
@@ -398,7 +417,7 @@ function displaySongs() {
             media += `\n                <p><a class="media-link media-link-video" href="${song.videoUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Watch video</a></p>`;
         }
 
-        if (song.spotifyUrl) {
+        if (shouldShowSpotifyLink(song)) {
             media += `\n                <p><a class="media-link media-link-spotify" href="${song.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
         }
 
