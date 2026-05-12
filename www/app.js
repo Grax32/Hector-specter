@@ -119,6 +119,30 @@ async function loadSongFromPath(fullPath, metadata = {}) {
     }
 }
 
+function getReleaseTimestamp(value) {
+    if (!value) {
+        return Number.NEGATIVE_INFINITY;
+    }
+
+    const timestamp = Date.parse(value);
+    return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
+}
+
+function formatReleaseDate(value) {
+    const timestamp = getReleaseTimestamp(value);
+
+    if (!Number.isFinite(timestamp)) {
+        return value || '';
+    }
+
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'UTC'
+    }).format(new Date(timestamp));
+}
+
 // Load all songs
 async function loadSongs() {
     const seenPaths = new Set();
@@ -165,17 +189,62 @@ async function loadSongs() {
 }
 
 function parseReleaseDate(item) {
-    if (!item || !item.releaseDate) {
-        return Number.NEGATIVE_INFINITY;
-    }
+    return getReleaseTimestamp(item?.releaseDate);
+}
 
-    const timestamp = Date.parse(item.releaseDate);
-    return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
+function getReleaseLabel(item) {
+    return item?.releaseDate ? formatReleaseDate(item.releaseDate) : (item?.year || '');
+}
+
+function isUpcomingRelease(item) {
+    const releaseTimestamp = parseReleaseDate(item);
+    return Number.isFinite(releaseTimestamp) && releaseTimestamp > Date.now();
 }
 
 function shouldShowSpotifyLink(item) {
     const releaseTimestamp = parseReleaseDate(item);
     return Boolean(item?.spotifyUrl) && Number.isFinite(releaseTimestamp) && releaseTimestamp <= Date.now();
+}
+
+function setActiveLibraryTypeFilter(filterType) {
+    document.querySelectorAll('.library-tab').forEach(tab => {
+        tab.classList.toggle('is-active', tab.dataset.typeFilter === filterType);
+    });
+}
+
+function focusLibraryCard(attributeName, path) {
+    showLibraryPage();
+    displayLibrary();
+
+    requestAnimationFrame(() => {
+        const cards = Array.from(document.querySelectorAll(`[${attributeName}]`));
+        const card = cards.find(candidate => candidate.getAttribute(attributeName) === path);
+
+        if (!card) {
+            return;
+        }
+
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('is-focused');
+        setTimeout(() => card.classList.remove('is-focused'), 1800);
+    });
+}
+
+function activateFeaturedItem(item, featured) {
+    if (featured.type === 'album') {
+        showAlbumDetail(item.path);
+        return;
+    }
+
+    if (item.albumPath) {
+        showAlbumDetail(item.albumPath);
+        return;
+    }
+
+    if (item.releaseType === 'single') {
+        setActiveLibraryTypeFilter('single');
+        focusLibraryCard('data-single-path', item.path);
+    }
 }
 
 // Display the featured item (latest release)
@@ -209,6 +278,7 @@ function displayFeatured() {
     }
 
     const artworkPath = `${item.path}/${item.artwork}`;
+    const releaseLabel = getReleaseLabel(item);
 
     let mediaHtml = '';
     if (item.videoFile) {
@@ -222,12 +292,15 @@ function displayFeatured() {
     }
 
     featuredContainer.innerHTML = `
-        <div class="featured-item">
-            <img src="${artworkPath}" alt="${item.title}">
+        <article class="featured-item featured-item-clickable" role="link" tabindex="0" aria-label="Open ${item.title}">
+            <div class="featured-artwork">
+                <img src="${artworkPath}" alt="${item.title}">
+                ${isUpcomingRelease(item) ? '<span class="release-banner release-banner-upcoming">Coming Soon</span>' : ''}
+            </div>
             <div class="featured-info">
                 <h3>${item.title}</h3>
                 <span class="type">${itemType}</span>
-                <p><strong>Release Date:</strong> ${item.releaseDate || item.year}</p>
+                <p><strong>Release Date:</strong> ${releaseLabel}</p>
                 ${item.description ? `<p>${item.description}</p>` : ''}
                 ${featured.type === 'album' && item.songs ?
                     `<p class="track-count">${item.songs.length} tracks</p>` : ''}
@@ -235,8 +308,29 @@ function displayFeatured() {
                     `<p><strong>Duration:</strong> ${item.duration}</p>` : ''}
                 ${mediaHtml}
             </div>
-        </div>
+        </article>
     `;
+
+    const featuredItem = featuredContainer.querySelector('.featured-item-clickable');
+
+    if (featuredItem) {
+        featuredItem.addEventListener('click', event => {
+            if (event.target.closest('a, button, video, audio, input, select, textarea')) {
+                return;
+            }
+
+            activateFeaturedItem(item, featured);
+        });
+
+        featuredItem.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+
+            event.preventDefault();
+            activateFeaturedItem(item, featured);
+        });
+    }
 }
 
 function setupLibraryNavigation() {
@@ -295,6 +389,7 @@ function displayLibrary() {
         })),
         ...singles.map(single => ({
             type: 'single',
+            path: single.path,
             title: single.title,
             releaseDate: single.releaseDate || '',
             subtitle: single.releaseDate || '',
@@ -327,18 +422,29 @@ function displayLibrary() {
         return;
     }
 
-    libraryResults.innerHTML = sortedItems.map(item => `
-        <article class="library-card ${item.type === 'album' ? 'library-card-clickable' : ''}" ${item.type === 'album' ? `data-album-path="${item.path}"` : ''}>
-            ${item.artwork ? `<img src="${item.artwork}" alt="${item.title}">` : ''}
+    libraryResults.innerHTML = sortedItems.map(item => {
+        const releaseLabel = item.subtitle ? formatReleaseDate(item.subtitle) : '';
+
+        return `
+        <article class="library-card ${item.type === 'album' ? 'library-card-clickable' : ''}" ${item.type === 'album' ? `data-album-path="${item.path}"` : `data-single-path="${item.path}"`}>
+            <div class="library-card-artwork">
+                ${item.artwork ? `<img src="${item.artwork}" alt="${item.title}">` : ''}
+                ${isUpcomingRelease(item) ? '<span class="release-banner release-banner-upcoming">Coming Soon</span>' : ''}
+            </div>
             <div class="library-card-info">
                 <span class="library-card-type">${item.type === 'album' ? 'Album' : 'Single'}</span>
                 <h3>${item.title}</h3>
-                ${item.subtitle ? `<p class="year">${item.subtitle}</p>` : ''}
                 ${item.description ? `<p class="description">${item.description}</p>` : ''}
-                ${shouldShowSpotifyLink(item) ? `<p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>` : ''}
+                <div class="library-card-footer">
+                    ${releaseLabel ? `<p class="year">${item.type === 'album' ? 'Release Date' : 'Released'}: ${releaseLabel}</p>` : ''}
+                    <div class="library-card-actions">
+                        ${shouldShowSpotifyLink(item) ? `<a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a>` : ''}
+                    </div>
+                </div>
             </div>
         </article>
-    `).join('');
+    `;
+    }).join('');
 
     libraryResults.querySelectorAll('.library-card-clickable').forEach(card => {
         card.addEventListener('click', () => {
@@ -408,6 +514,7 @@ function getAlbumSongs(album, albumPath) {
 
 function renderAlbumSongCard(song, album, index) {
     const artwork = song.artwork ? `${song.path}/${song.artwork}` : (album.artwork ? `${album.path}/${album.artwork}` : '');
+    const releaseLabel = song.releaseDate ? formatReleaseDate(song.releaseDate) : '';
 
     let mediaHtml = '';
     if (song.videoUrl) {
@@ -424,7 +531,7 @@ function renderAlbumSongCard(song, album, index) {
             <div class="library-card-info">
                 <span class="library-card-type">Track ${String(index + 1).padStart(2, '0')}</span>
                 <h3>${song.title}</h3>
-                ${song.releaseDate ? `<p class="year">Released: ${song.releaseDate}</p>` : ''}
+                ${releaseLabel ? `<p class="year">Release Date: ${releaseLabel}</p>` : ''}
                 ${song.duration ? `<p class="description">Duration: ${song.duration}</p>` : ''}
                 ${song.description ? `<p class="description">${song.description}</p>` : ''}
                 ${mediaHtml}
@@ -462,6 +569,7 @@ function showAlbumDetail(albumPath, options = {}) {
     const subtitle = document.getElementById('album-page-subtitle');
     const songsGrid = document.getElementById('album-page-songs');
     const media = document.getElementById('album-page-media');
+    const kicker = albumPage.querySelector('.album-page-kicker');
 
     if (!albumPage || !title || !artwork || !subtitle || !songsGrid || !media) {
         return;
@@ -470,9 +578,13 @@ function showAlbumDetail(albumPath, options = {}) {
     const tracksToShow = getAlbumSongs(album, albumPath);
 
     title.textContent = album.title;
-    subtitle.textContent = [album.releaseDate || album.year, `${tracksToShow.length} ${tracksToShow.length === 1 ? 'track' : 'tracks'}`]
+    subtitle.textContent = [getReleaseLabel(album), `${tracksToShow.length} ${tracksToShow.length === 1 ? 'track' : 'tracks'}`]
         .filter(Boolean)
         .join(' • ');
+
+    if (kicker) {
+        kicker.textContent = isUpcomingRelease(album) ? 'Coming Soon' : 'Album';
+    }
 
     if (album.artwork) {
         artwork.src = `${album.path}/${album.artwork}`;
@@ -485,6 +597,8 @@ function showAlbumDetail(albumPath, options = {}) {
     media.innerHTML = shouldShowSpotifyLink(album)
         ? `<p><a class="media-link media-link-spotify" href="${album.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`
         : '';
+
+    albumPage.classList.toggle('is-upcoming', isUpcomingRelease(album));
 
     if (tracksToShow.length === 0) {
         songsGrid.innerHTML = '<p class="library-empty">No tracks found for this album.</p>';
@@ -541,7 +655,7 @@ function displaySongs() {
             ${song.artwork ? `<img src="${song.path}/${song.artwork}" alt="${song.title}">` : ''}
             <h3>${song.title}</h3>
             ${song.albumName ? `<p class="album-name">${song.releaseType === 'single' ? 'Release' : 'From'}: ${song.albumName}</p>` : ''}
-            ${song.releaseDate ? `<p class="duration">Released: ${song.releaseDate}</p>` : ''}
+            ${song.releaseDate ? `<p class="duration">Release Date: ${formatReleaseDate(song.releaseDate)}</p>` : ''}
             ${song.duration ? `<p class="duration">Duration: ${song.duration}</p>` : ''}
             ${media}
         </div>
