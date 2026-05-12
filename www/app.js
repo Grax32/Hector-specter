@@ -436,7 +436,7 @@ function displayLibrary() {
                 <h3>${item.title}</h3>
                 ${item.description ? `<p class="description">${item.description}</p>` : ''}
                 <div class="library-card-footer">
-                    ${releaseLabel ? `<p class="year">${item.type === 'album' ? 'Release Date' : 'Released'}: ${releaseLabel}</p>` : ''}
+                    ${releaseLabel ? `<p class="year">Release Date: ${releaseLabel}</p>` : ''}
                     <div class="library-card-actions">
                         ${shouldShowSpotifyLink(item) ? `<a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a>` : ''}
                     </div>
