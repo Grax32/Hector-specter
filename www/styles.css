@@ -524,6 +524,17 @@ section h2 {
     border-color: var(--accent-secondary-hover);
 }
 
+.media-link-listen-now {
+    border-color: rgba(196, 106, 45, 0.55);
+}
+
+.media-link-listen-now:hover,
+.media-link-listen-now:focus-visible {
+    color: #1d0f06;
+    background: var(--accent-secondary-hover);
+    border-color: var(--accent-secondary-hover);
+}
+
 /* Footer */
 footer {
     background: var(--bg-overlay);
