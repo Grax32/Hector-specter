@@ -248,6 +248,20 @@ function activateFeaturedItem(item, featured) {
 }
 
 // Display the featured item (latest release)
+function renderReleaseLinks(item) {
+    let links = '';
+
+    if (item.listenNowUrl) {
+        links += `<p><a class="media-link media-link-listen-now" href="${item.listenNowUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Listen Now Online</a></p>`;
+    }
+
+    if (shouldShowSpotifyLink(item)) {
+        links += `<p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
+    }
+
+    return links;
+}
+
 function displayFeatured() {
     const featuredContainer = document.getElementById('featured-content');
     
@@ -287,9 +301,7 @@ function displayFeatured() {
         mediaHtml += `\n                <p><a class="media-link media-link-video" href="${item.videoUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">▶</span>Watch video</a></p>`;
     }
 
-    if (shouldShowSpotifyLink(item)) {
-        mediaHtml += `\n                <p><a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`;
-    }
+    mediaHtml += renderReleaseLinks(item);
 
     featuredContainer.innerHTML = `
         <article class="featured-item featured-item-clickable" role="link" tabindex="0" aria-label="Open ${item.title}">
@@ -438,7 +450,7 @@ function displayLibrary() {
                 <div class="library-card-footer">
                     ${releaseLabel ? `<p class="year">Release Date: ${releaseLabel}</p>` : ''}
                     <div class="library-card-actions">
-                        ${shouldShowSpotifyLink(item) ? `<a class="media-link media-link-spotify" href="${item.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a>` : ''}
+                        ${renderReleaseLinks(item)}
                     </div>
                 </div>
             </div>
@@ -594,9 +606,7 @@ function showAlbumDetail(albumPath, options = {}) {
         artwork.hidden = true;
     }
 
-    media.innerHTML = shouldShowSpotifyLink(album)
-        ? `<p><a class="media-link media-link-spotify" href="${album.spotifyUrl}" target="_blank" rel="noopener"><span class="media-link-icon" aria-hidden="true">♫</span>Listen on Spotify</a></p>`
-        : '';
+    media.innerHTML = renderReleaseLinks(album);
 
     albumPage.classList.toggle('is-upcoming', isUpcomingRelease(album));
 
