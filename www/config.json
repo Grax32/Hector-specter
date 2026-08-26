@@ -1,9 +1,10 @@
 {
   "featured": {
     "type": "album",
-    "path": "content/albums/hectors-house"
+    "path": "content/albums/hectors-summer-house"
   },
   "albums": [
+    "content/albums/hectors-summer-house",
     "content/albums/system-failure",
     "content/albums/hectors-house"
   ],
